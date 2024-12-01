@@ -233,12 +233,18 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public static function configure(?string $basePath = null)
     {
+        $instance = static::getInstance();
+
         $basePath = match (true) {
             is_string($basePath) => $basePath,
             default => static::inferBasePath(),
         };
 
-        return (new Configuration\ApplicationBuilder(new static($basePath)))
+        if ($basePath) {
+            $instance->setBasePath($basePath);
+        }
+
+        return (new Configuration\ApplicationBuilder($instance))
             ->withKernels()
             ->withEvents()
             ->withCommands()
